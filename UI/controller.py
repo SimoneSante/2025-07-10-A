@@ -10,11 +10,49 @@ class Controller:
         # the model, which implements the logic of the program and holds the data
         self._model = model
 
+    def ddda(self):
+        self._view._ddcategory.options.clear()
+        self._view._ddcategory.value = None
+
+        listaS = self._model.getDateCategory()
+
+        for l in listaS:
+            self._view._ddcategory.options.append(
+                ft.dropdown.Option(
+                    key=l.category_id,
+                    text=l.category_name,
+                )
+            )
+        self._view.update_page()
+
+
+
+
     def handleCreaGrafo(self, e):
-        pass
+        self._view.txt_result.controls.clear()
+        try:
+            store = str(self._view._dp1.value)[:10]
+            k = str(self._view._dp2.value)[:10]
+            cat = str(self._view._ddcategory.value)
+        except ValueError:
+            self._view.txt_result.controls.append(ft.Text("selezionare entrambi gli anni"))
+        if store is None or k is None:
+            self._view.txt_result.controls.append(
+                ft.Text("selezionare entrambi i campi", color="red")
+            )
+
+        self._model.build_graph(store, k,cat)
+        stats = self._model.get_stats()
+        self._view.txt_result.controls.append(ft.Text(f"stats:{stats[0]} e {stats[1]}"))
+        self._view.update_page()
+
 
     def handleBestProdotti(self, e):
-        pass
+        listatop=self._model.topprod()
+        for a in listatop:
+            self._view.txt_result.controls.append(ft.Text(f"{a[0].product_name}, {a[1]}" ))
+        self._view.update_page()
+
 
     def handleCercaCammino(self, e):
         pass
